@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CPB Lexical Database & Psycholinguistic Explorer</title>
+  <title>cpb-lex: Children's Picture Book Lexical Database</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
@@ -17,10 +16,10 @@
       padding: 20px;
     }
 
-    .container { max-width: 1800px; margin: 0 auto; }
+    .container { max-width: 1900px; margin: 0 auto; }
     header { text-align: center; margin-bottom: 25px; }
-    h1 { margin: 0 0 8px 0; font-size: 2.2rem; color: #0f766e; font-weight: 800; }
-    .tagline { font-size: 1.1rem; color: #475569; max-width: 900px; margin: 0 auto; }
+    h1 { margin: 0 0 8px 0; font-size: 2.4rem; color: #0f766e; font-weight: 800; }
+    .tagline { font-size: 1.1rem; color: #475569; max-width: 1000px; margin: 0 auto; }
 
     .tabs {
       display: flex;
@@ -34,7 +33,7 @@
       border: 1px solid #cbd5e1;
       background: #fff;
       color: #334155;
-      padding: 12px 20px;
+      padding: 12px 24px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
@@ -47,9 +46,6 @@
       border-color: #0f766e;
       box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
     }
-
-    .tab-pane { display: none; }
-    .tab-pane.active { display: block; }
 
     .about-box {
       background: white;
@@ -64,17 +60,18 @@
     .controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 16px;
       justify-content: space-between;
       margin: 20px 0;
       align-items: center;
       background: white;
-      padding: 16px;
+      padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      border: 1px solid #e2e8f0;
     }
 
-    .search-group { display: flex; gap: 8px; flex-grow: 1; max-width: 700px; }
+    .search-group { display: flex; gap: 10px; flex-grow: 1; max-width: 600px; }
 
     #globalSearch {
       flex-grow: 1;
@@ -87,7 +84,7 @@
     .btn {
       background: #0f766e;
       color: white;
-      padding: 12px 20px;
+      padding: 12px 22px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -97,20 +94,20 @@
     .btn:hover { background: #115e59; }
 
     .btn-secondary {
-      background: #e2e8f0;
-      color: #1e293b;
-      border: none;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
       border-radius: 8px;
       padding: 12px 18px;
       cursor: pointer;
       font-weight: 600;
     }
-    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-secondary:hover { background: #e2e8f0; }
 
     .meta-info {
-      font-size: 0.95rem;
-      color: #64748b;
-      font-weight: 500;
+      font-size: 1rem;
+      color: #475569;
+      font-weight: 600;
     }
 
     .table-container {
@@ -120,6 +117,7 @@
       border-radius: 12px;
       margin-bottom: 20px;
       border: 1px solid #e2e8f0;
+      max-height: 70vh;
     }
 
     table {
@@ -129,14 +127,14 @@
     }
 
     th, td {
-      padding: 12px 14px;
+      padding: 10px 12px;
       border-bottom: 1px solid #edf2f7;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
     }
 
     th {
       background: #f8fafc;
-      color: #334155;
+      color: #1e293b;
       cursor: pointer;
       position: sticky;
       top: 0;
@@ -149,13 +147,34 @@
 
     tr:hover td { background: #f0fdfa; }
 
-    .filter-row input {
+    .filter-row td {
+      background: #f8fafc;
+      padding: 8px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .filter-input {
       width: 100%;
       padding: 6px 8px;
-      border-radius: 4px;
+      border-radius: 6px;
       border: 1px solid #cbd5e1;
       font-size: 0.8rem;
       box-sizing: border-box;
+    }
+
+    .num-filter-container {
+      display: flex;
+      gap: 4px;
+    }
+
+    .num-filter-container input {
+      width: 50%;
+      padding: 6px 4px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      font-size: 0.78rem;
+      box-sizing: border-box;
+      text-align: center;
     }
 
     .pagination {
@@ -177,57 +196,56 @@
 
     #loading-overlay {
       text-align: center;
-      padding: 50px;
-      font-size: 1.2rem;
+      padding: 60px;
+      font-size: 1.3rem;
       font-weight: 600;
       color: #0f766e;
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      border: 1px solid #e2e8f0;
     }
-
-    /* AI Prompter layout modifications */
-    .ai-wrap { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
-    .ai-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 20px 0; }
-    .ai-field label { display: block; font-size: 0.9rem; color: #334155; margin-bottom: 6px; font-weight: 600; }
-    .ai-field input, .ai-field select, .ai-field textarea {
-      width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; font-size: 0.95rem; box-sizing: border-box;
-    }
-    .ai-field textarea { min-height: 150px; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <header>
-      <h1>CPB Lexical Database</h1>
-      <div class="tagline">Interactive Exploration Portal for Psycholinguistic and Corpus Matrix Revisions</div>
+      <h1>cpb-lex Database Portal</h1>
+      <div class="tagline">A large-scale lexical database of early print exposure statistics derived from child-directed picture book read-alouds.</div>
     </header>
 
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('master')">Master Lexicon</button>
       <button class="tab-btn" onclick="switchTab('lemmas')">Lemmas & POS</button>
-      <button class="tab-btn" onclick="switchTab('bigrams')">Bigrams</button>
+      <button class="tab-btn" onclick="switchTab('bigrams')">Bigrams Lexicon</button>
       <button class="tab-btn" onclick="switchTab('pos-bigrams')">POS Bigrams</button>
-      <button class="tab-btn" onclick="switchTab('key')">Key to Values</button>
-      <button class="tab-btn" onclick="switchTab('ai-studio')">AI Research Assistant</button>
+      <button class="tab-btn" onclick="switchTab('key')">Key to Values (Codebook)</button>
     </div>
 
-    <div id="loading-overlay">Initializing and unpacking Compressed Dataset...</div>
+    <div id="loading-overlay">Initializing and unpacking compressed dataset segments...</div>
 
     <main id="main-content" style="display:none;">
       
+      <div class="about-box">
+        <h3>Database & Filtering Guide</h3>
+        <p style="margin: 0 0 8px 0; color: #334155;">
+          This platform handles advanced corpus filtration variables natively. 
+          Use the **global search box** to instantly locate target alphanumeric keys, or use the dedicated **column filter row** directly below headers to apply precise numeric ranges (e.g., specific Zipf bands or Age of Acquisition indices).
+        </p>
+      </div>
+
       <div class="controls">
         <div class="search-group">
-          <input type="text" id="globalSearch" placeholder="Global regex or string filter across text fields..." onkeyup="handleSearchInput(event)"/>
+          <input type="text" id="globalSearch" placeholder="Global search across text attributes..." onkeyup="handleSearchInput(event)"/>
           <button class="btn" onclick="applyCurrentFilters()">Search 🔍</button>
         </div>
         <div>
-          <button class="btn-secondary" onclick="resetAllFilters()">Clear Filters 🧹</button>
-          <button class="btn" style="background:#0284c7;" onclick="exportFilteredDataset()">Export Filtered Data ↓</button>
+          <button class="btn-secondary" onclick="resetAllFilters()">Reset All Filters 🧹</button>
+          <button class="btn" style="background:#0284c7;" onclick="exportFilteredDataset()">Export Filtered Dataset ↓</button>
         </div>
         <div class="meta-info">
-          Total Visible Records: <span id="record-count" style="color:#0f766e; font-weight:700;">0</span>
+          Matching Entries: <span id="record-count" style="color:#0f766e; font-weight:700;">0</span>
         </div>
       </div>
 
@@ -239,63 +257,21 @@
       </div>
 
       <div class="pagination">
-        <button onclick="changePage(-1)">← Prev</button>
+        <button onclick="changePage(-1)">← Previous</button>
         <span>Page <strong id="current-page-num">1</strong> of <strong id="total-pages-num">1</strong></span>
         <button onclick="changePage(1)">Next →</button>
         <select id="page-size-select" onchange="updatePageSize()">
-          <option value="50">50 items / page</option>
-          <option value="100" selected>100 items / page</option>
-          <option value="250">250 items / page</option>
+          <option value="50">50 rows</option>
+          <option value="100" selected>100 rows</option>
+          <option value="250">250 rows</option>
+          <option value="500">500 rows</option>
         </select>
       </div>
     </main>
-
-    <section id="ai-studio-panel" class="tab-pane">
-      <div class="ai-wrap">
-        <h2>AI Psycholinguistic Prompt Studio</h2>
-        <p style="color:#475569;">Convert subsets of filtered lexical structures into structural prompts tailored for experimental item generation or custom educational reading tasks.</p>
-        
-        <div class="ai-grid">
-          <div class="ai-field">
-            <label>Target Grade/Reading Cohort Level</label>
-            <select id="ai-grade-metric">
-              <option>Early Elementary (K-2)</option>
-              <option selected>Upper Elementary (Grades 3-5)</option>
-              <option>Middle School (Grades 6-8)</option>
-              <option>Adult / Advanced</option>
-            </select>
-          </div>
-          <div class="ai-field">
-            <label>Extraction Strategy</label>
-            <select id="ai-sample-strategy">
-              <option value="top">Top rows from filtered list</option>
-              <option value="random" selected>Randomized balanced sample</option>
-            </select>
-          </div>
-          <div class="ai-field">
-            <label>Sample Capacity Size</label>
-            <input type="number" id="ai-sample-size" value="10" min="1" max="50" />
-          </div>
-        </div>
-
-        <div class="ai-field">
-          <label>Contextual Task Guidelines & Constraint Overrides</label>
-          <textarea id="ai-custom-instructions" placeholder="e.g., Construct a 200-word cohesive reading passage incorporating these words. Highlight lexical frequency variants and provide student definitions emphasizing Age of Acquisition attributes."></textarea>
-        </div>
-
-        <button class="btn" onclick="generateLexicalPrompt()">✨ Synthesize Custom AI Prompt</button>
-        
-        <div class="ai-field" style="margin-top:20px;">
-          <label>Generated Ready-to-Copy Prompt Output</label>
-          <textarea id="ai-prompt-output" readonly style="background:#f8fafc; font-family:monospace; font-size:0.9rem; color:#1e293b;"></textarea>
-        </div>
-      </div>
-    </section>
-
   </div>
 
   <script>
-    // Configuration Object pointing to the paths relative to your repository layout root folder
+    // Asset layout configurations targeting GZIP payloads
     const REPO_DATA_PATHS = {
       master: 'CPB(Lexicon)__Master.csv.gz',
       key: 'CPB(Lexicon)__Key to Values.csv.gz',
@@ -309,7 +285,10 @@
     let runtimeFilteredData = [];
     let currentPage = 1;
     let pageSize = 100;
-    let explicitColumnFilters = {};
+    
+    // Tracks active text/numeric values for each column
+    let explicitColumnFilters = {}; 
+    let columnDataTypes = {}; 
     let systematicSortState = { column: null, ascending: true };
 
     document.addEventListener("DOMContentLoaded", async () => {
@@ -317,17 +296,16 @@
         await bootstrapDatabaseLoad();
       } catch (err) {
         document.getElementById('loading-overlay').innerHTML = 
-          `<span style="color:#ef4444;">Initialization Failure: ${err.message}. Ensure your local server is running or deployment configurations are correct.</span>`;
+          `<span style="color:#ef4444;">Decompression Error: ${err.message}. Check your file positioning parameters.</span>`;
         console.error(err);
       }
     });
 
-    // Native Decompression Framework Implementation
+    // Native Decompression Processing Engine
     async function fetchAndUnpackGzipCSV(url) {
       const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP network error reading profile: Status ${response.status}`);
+      if (!response.ok) throw new Error(`Network failure locating file node: ${url}`);
       
-      // Leverages the native browser stream decompression API
       const decompressionStream = new DecompressionStream('gzip');
       const textDecoderStream = new TextDecoderStream();
       
@@ -335,7 +313,6 @@
         .pipeThrough(decompressionStream)
         .pipeThrough(textDecoderStream);
         
-      // Read entire response buffer cleanly
       let accumulatedOutput = '';
       const reader = readableStream.getReader();
       while (true) {
@@ -348,7 +325,7 @@
 
     async function bootstrapDatabaseLoad() {
       for (const [key, relativePath] of Object.entries(REPO_DATA_PATHS)) {
-        document.getElementById('loading-overlay').innerText = `Decompressing and Indexing Table Data Target: ${key}...`;
+        document.getElementById('loading-overlay').innerText = `Unpacking and parsing standard matrix: ${key}...`;
         try {
           const rawCsvString = await fetchAndUnpackGzipCSV(relativePath);
           const parsed = Papa.parse(rawCsvString.trim(), {
@@ -358,7 +335,7 @@
           });
           datasetRegistry[key] = parsed.data;
         } catch(e) {
-          console.warn(`Could not preload ${key}: ${e.message}. Ensuring fallback placeholder states remain active.`);
+          console.warn(`Preloading failed for index [${key}]: ${e.message}.`);
           datasetRegistry[key] = [];
         }
       }
@@ -369,21 +346,41 @@
     }
 
     function initializeActiveViewEngine() {
-      document.getElementById('ai-studio-panel').classList.remove('active');
-      document.getElementById('main-content').style.display = activeTab === 'ai-studio' ? 'none' : 'block';
-      
-      if (activeTab === 'ai-studio') {
-        document.getElementById('ai-studio-panel').classList.add('active');
-        return;
-      }
-
       runtimeFilteredData = [...(datasetRegistry[activeTab] || [])];
       explicitColumnFilters = {};
+      columnDataTypes = {};
       systematicSortState = { column: null, ascending: true };
       currentPage = 1;
       
+      analyzeColumnMetadata();
       generateDynamicHeaderRow();
       applyDataTransformationFilters();
+    }
+
+    // Identifies numerical parameters versus lexical attributes across vectors
+    function analyzeColumnMetadata() {
+      const dataPool = datasetRegistry[activeTab] || [];
+      if (!dataPool.length) return;
+      
+      const keys = Object.keys(dataPool[0]);
+      keys.forEach(k => {
+        // Look at the first 10 rows to detect typical contents
+        let isNumeric = false;
+        for (let i = 0; i < Math.min(dataPool.length, 10); i++) {
+          const val = dataPool[i][k];
+          if (val !== null && val !== undefined && typeof val === 'number') {
+            isNumeric = true;
+            break;
+          }
+        }
+        columnDataTypes[k] = isNumeric ? 'numeric' : 'text';
+        
+        if (isNumeric) {
+          explicitColumnFilters[k] = { min: '', max: '' };
+        } else {
+          explicitColumnFilters[k] = '';
+        }
+      });
     }
 
     function generateDynamicHeaderRow() {
@@ -392,13 +389,13 @@
       
       const sampleRecord = datasetRegistry[activeTab]?.[0];
       if (!sampleRecord) {
-        headEl.innerHTML = '<tr><th>No data found or processed for selected registry layout matrix.</th></tr>';
+        headEl.innerHTML = '<tr><th>No parseable records registered inside current operational view state.</th></tr>';
         return;
       }
 
       const keys = Object.keys(sampleRecord);
       
-      // Row 1: Direct Column Display and Sorting Controls
+      // Dynamic Column Sorting Row
       const sortRow = document.createElement('tr');
       keys.forEach(k => {
         const th = document.createElement('th');
@@ -408,20 +405,55 @@
       });
       headEl.appendChild(sortRow);
 
-      // Row 2: Per-column contextual mini-filters
+      // Context-aware Smart Filter Interface Input Generation Row
       const filterRow = document.createElement('tr');
       filterRow.className = 'filter-row';
+      
       keys.forEach(k => {
         const td = document.createElement('td');
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = `Filter matching...`;
-        input.value = explicitColumnFilters[k] || '';
-        input.onkeyup = (e) => {
-          explicitColumnFilters[k] = e.target.value;
-          applyDataTransformationFilters();
-        };
-        td.appendChild(input);
+        
+        if (columnDataTypes[k] === 'numeric') {
+          // Double bound min-max layout constraints box for quantitative metrics
+          const div = document.createElement('div');
+          div.className = 'num-filter-container';
+          
+          const minInput = document.createElement('input');
+          minInput.type = 'number';
+          minInput.step = 'any';
+          minInput.placeholder = 'Min';
+          minInput.value = explicitColumnFilters[k].min;
+          minInput.oninput = (e) => {
+            explicitColumnFilters[k].min = e.target.value;
+            applyDataTransformationFilters();
+          };
+          
+          const maxInput = document.createElement('input');
+          maxInput.type = 'number';
+          maxInput.step = 'any';
+          maxInput.placeholder = 'Max';
+          maxInput.value = explicitColumnFilters[k].max;
+          maxInput.oninput = (e) => {
+            explicitColumnFilters[k].max = e.target.value;
+            applyDataTransformationFilters();
+          };
+          
+          div.appendChild(minInput);
+          div.appendChild(maxInput);
+          td.appendChild(div);
+        } else {
+          // Standard text sub-string query parser
+          const input = document.createElement('input');
+          input.className = 'filter-input';
+          input.type = 'text';
+          input.placeholder = 'Contains...';
+          input.value = explicitColumnFilters[k];
+          input.onkeyup = (e) => {
+            explicitColumnFilters[k] = e.target.value;
+            applyDataTransformationFilters();
+          };
+          td.appendChild(input);
+        }
+        
         filterRow.appendChild(td);
       });
       headEl.appendChild(filterRow);
@@ -432,14 +464,31 @@
       const globalSearchVal = document.getElementById('globalSearch').value.trim().toLowerCase();
 
       runtimeFilteredData = baselineDataset.filter(row => {
-        // Evaluate column specific targeted parameters
-        for (const [colKey, filterVal] of Object.entries(explicitColumnFilters)) {
-          if (!filterVal) continue;
-          const targetValue = String(row[colKey] ?? '').toLowerCase();
-          if (!targetValue.includes(filterVal.toLowerCase())) return false;
+        // Execute focused filter transformations
+        for (const k of Object.keys(explicitColumnFilters)) {
+          const type = columnDataTypes[k];
+          const val = row[k];
+          
+          if (type === 'numeric') {
+            const minBound = explicitColumnFilters[k].min;
+            const maxBound = explicitColumnFilters[k].max;
+            
+            if (minBound !== '' && (val === null || val === undefined || val < parseFloat(minBound))) {
+              return false;
+            }
+            if (maxBound !== '' && (val === null || val === undefined || val > parseFloat(maxBound))) {
+              return false;
+            }
+          } else {
+            const filterText = explicitColumnFilters[k];
+            if (filterText) {
+              const targetStringValue = String(val ?? '').toLowerCase();
+              if (!targetStringValue.includes(filterText.toLowerCase())) return false;
+            }
+          }
         }
 
-        // Evaluate global search overlay across entire properties row structure
+        // Execute global string match parameter over the remaining subset objects
         if (globalSearchVal) {
           const matchedAnywhere = Object.values(row).some(val => 
             String(val ?? '').toLowerCase().includes(globalSearchVal)
@@ -450,6 +499,7 @@
         return true;
       });
 
+      // Maintain user sort selections post-filtration array pipeline processing
       if (systematicSortState.column) {
         const col = systematicSortState.column;
         const ascModifier = systematicSortState.ascending ? 1 : -1;
@@ -483,7 +533,7 @@
       document.getElementById('total-pages-num').innerText = totalPages;
 
       if (elementsSlice.length === 0) {
-        bodyEl.innerHTML = '<tr><td colspan="100" style="text-align:center; padding:30px; color:#64748b;">No items match the chosen query parameters.</td></tr>';
+        bodyEl.innerHTML = '<tr><td colspan="100" style="text-align:center; padding:40px; color:#64748b; font-weight:500;">No items match the active numeric parameters or search expressions.</td></tr>';
         return;
       }
 
@@ -491,9 +541,8 @@
         const tr = document.createElement('tr');
         Object.values(row).forEach(val => {
           const td = document.createElement('td');
-          // Format numeric distributions beautifully if applicable
           if (typeof val === 'number' && !Number.isInteger(val)) {
-            td.innerText = val.toFixed(4);
+            td.innerText = val.toFixed(4); // Normalizes floats down to 4 places for layout stability
           } else {
             td.innerText = val ?? '';
           }
@@ -523,7 +572,7 @@
 
     function resetAllFilters() {
       document.getElementById('globalSearch').value = '';
-      explicitColumnFilters = {};
+      analyzeColumnMetadata(); // Resets active filter objects clean mapping arrays
       generateDynamicHeaderRow();
       applyDataTransformationFilters();
     }
@@ -547,21 +596,18 @@
       activeTab = tabKey;
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (btn.innerText.toLowerCase().includes(tabKey.replace('-',' ').split(' ')[0])) {
-          btn.classList.add('active');
-        }
       });
-      // Absolute tab string exact matching check override injection
-      if(tabKey === 'pos-bigrams') {
-        document.querySelectorAll('.tab-btn')[3].classList.add('active');
-      }
+      
+      // Tab selection confirmation assignments
+      const buttonIndexMap = { master: 0, lemmas: 1, bigrams: 2, 'pos-bigrams': 3, key: 4 };
+      document.querySelectorAll('.tab-btn')[buttonIndexMap[tabKey]].classList.add('active');
+      
       initializeActiveViewEngine();
     }
 
-    // Dynamic Client-side CSV Exporter System
     function exportFilteredDataset() {
       if (!runtimeFilteredData.length) {
-        alert("No target filtered entries exist for processing downline stream execution.");
+        alert("Operational failure: No matching filtered rows exist to format down to file stream.");
         return;
       }
       const csvContent = Papa.unparse(runtimeFilteredData);
@@ -569,55 +615,10 @@
       const downloadUrl = URL.createObjectURL(dataBlob);
       const proxyLink = document.createElement('a');
       proxyLink.href = downloadUrl;
-      proxyLink.setAttribute('download', `cpb_filtered_${activeTab}_export.csv`);
+      proxyLink.setAttribute('download', `cpb_lex_${activeTab}_filtered.csv`);
       document.body.appendChild(proxyLink);
       proxyLink.click();
       document.body.removeChild(proxyLink);
-    }
-
-    // AI Studio Lexical Generator System Integration logic
-    function generateLexicalPrompt() {
-      if (!runtimeFilteredData.length) {
-        alert("Please apply filters on the baseline database tabs first to isolate target word structures.");
-        return;
-      }
-      
-      const sampleSize = parseInt(document.getElementById('ai-sample-size').value, 10) || 10;
-      const strategy = document.getElementById('ai-sample-strategy').value;
-      const gradeLevel = document.getElementById('ai-grade-metric').value;
-      const extraInstructions = document.getElementById('ai-custom-instructions').value;
-      
-      let elementsPool = [];
-      if (strategy === 'top') {
-        elementsPool = runtimeFilteredData.slice(0, sampleSize);
-      } else {
-        // Deterministic linear shuffle sampling optimization array
-        const robustCopy = [...runtimeFilteredData];
-        for (let idx = robustCopy.length - 1; idx > 0; idx--) {
-          const randIndex = Math.floor(Math.random() * (idx + 1));
-          [robustCopy[idx], robustCopy[randIndex]] = [robustCopy[randIndex], robustCopy[idx]];
-        }
-        elementsPool = robustCopy.slice(0, sampleSize);
-      }
-
-      // Identify language structures dynamically
-      const cleanTokensSummary = elementsPool.map(item => {
-        const itemIdentifier = item['CPB Word'] || item['Lemmas'] || item['Word_POS'] || Object.values(item)[0];
-        const secondaryMetric = item['Zipf'] ? ` (Zipf: ${Number(item['Zipf']).toFixed(2)})` : '';
-        return `- ${itemIdentifier}${secondaryMetric}`;
-      }).join('\n');
-
-      const builtPrompt = `Context Profile: You are acting as an expert psycholinguist and developer of educational curriculums.
-Target Cohort Audience: ${gradeLevel}
-
-Please use the following parsed lexical elements extracted from our corpus tracking research environment:
-${cleanTokensSummary}
-
-Execution Instructions:
-${extraInstructions || "Construct a balanced instructional passage incorporating the designated tokens. Focus heavily on providing contextual meaning validation to clarify terms with unexpected Zipf indices or late explicit age of acquisition configurations."}
-`;
-
-      document.getElementById('ai-prompt-output').value = builtPrompt;
     }
   </script>
 </body>
