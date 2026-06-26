@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>cpb-lex: Children's Picture Book Lexical Database Portal</title>
 
-  <!-- PapaParse for fast CSV parsing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
   <style>
@@ -22,7 +21,8 @@
 
     .container { max-width: 1900px; margin: 0 auto; flex: 1; width: 100%; box-sizing: border-box; }
     
-    header { text-align: center; margin-bottom: 20px; }
+    header { text-align: center; margin-bottom: 25px; }
+    .header-logo { display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px; color: #0f766e; }
     h1 { margin: 0 0 8px 0; font-size: 2.4rem; color: #0f766e; font-weight: 800; }
     .tagline { font-size: 1.1rem; color: #475569; max-width: 1000px; margin: 0 auto; line-height: 1.5; }
 
@@ -41,11 +41,9 @@
       color: #334155;
       cursor: pointer;
       user-select: none;
-      list-style: none;
       display: flex;
       align-items: center;
     }
-    .info-section details summary::-webkit-details-marker { display: none; }
     .info-section details summary::before {
       content: "▼"; font-size: 0.8rem; margin-right: 10px; color: #94a3b8; transition: transform 0.2s;
     }
@@ -58,7 +56,7 @@
       padding-top: 15px;
       border-top: 1px solid #e2e8f0;
     }
-    .abstract-box h3 { margin: 0 0 10px 0; color: #0f766e; font-size: 1.05rem; }
+    .abstract-box h3 { margin: 0 0 10px 0; color: #0f766e; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; }
     .abstract-box.supplement h3 { color: #0284c7; }
     .abstract-box p { font-size: 0.9rem; color: #475569; line-height: 1.6; margin: 0 0 10px 0; text-align: justify; }
 
@@ -87,6 +85,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 8px;
       background: #0f766e;
       color: white;
       text-decoration: none;
@@ -166,6 +165,7 @@
       top: 0; z-index: 10; white-space: nowrap; user-select: none; border-bottom: 2px solid #cbd5e1;
     }
     th:hover { background: #f1f5f9; }
+    .sort-indicator { margin-left: 6px; color: #0f766e; font-size: 0.75rem; }
     tr:hover td { background: #f0fdfa; }
 
     .filter-row td { background: #f8fafc; padding: 8px; border-bottom: 2px solid #e2e8f0; }
@@ -196,50 +196,62 @@
 
   <div class="container">
     <header>
-      <h1>CHILDREN'S PICTUREBOOK LEXIOCN - CPB-Lex- Data Repository Portal</h1>
+      <div class="header-logo">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+      </div>
+      <h1>The Children's Picturebook Lexicon (CPB-Lex)</h1>
       <div class="tagline">An open-access empirical interface exploring vocabulary diversity, token frequencies, and genre distributions across childhood print exposure models.</div>
     </header>
 
-    <!-- Project Info / Abstracts Accordion -->
     <div class="info-section">
       <details>
         <summary>About the Datasets & Publications (Click to expand)</summary>
         <div class="abstract-grid">
           <div class="abstract-box">
-            <h3>Original CPB-LEX Publication</h3>
+            <h3>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Original CPB-LEX Publication
+            </h3>
             <p><strong>Behavior Research Methods (2024)</strong></p>
-            <p>The article Green, C., Keogh, K., Sun, H., & O’Brien, B. (2024). The Children’s Picture Books Lexicon (CPB-LEX): A large-scale lexical database from children’s picture books. Behavior Research Methods, 56(5), 4504-4521, availble here ((https://doi.org/10.3758/s13428-023-02198-y) presents CPB-LEX, a large-scale database of lexical statistics derived from children’s picture books (age range 0–8 years). CPB-LEX was built through an innovative method of computationally extracting lexical information from automatic speech-to-text captions and subtitle tracks generated from social media channels dedicated to reading picture books aloud .</p>
-            <p>It consists of approximately 25,585 types (wordforms) and their frequency norms (raw and Zipf-transformed), a lexicon of bigrams, and a document-term matrix. The frequency norms strongly predict age of acquisition and outperform comparable child-input lexical databases.</p>
+            <p>The article Green, C., Keogh, K., Sun, H., & O’Brien, B. (2024). The Children’s Picture Books Lexicon (CPB-LEX): A large-scale lexical database from children’s picture books. <i>Behavior Research Methods</i>, 56(5), 4504-4521, available here (<a href="https://doi.org/10.3758/s13428-023-02198-y" target="_blank">https://doi.org/10.3758/s13428-023-02198-y</a>) presents CPB-LEX, a large-scale database of lexical statistics derived from children’s picture books (age range 0–8 years).</p>
+            <p>CPB-LEX was built through an innovative method of computationally extracting lexical information from automatic speech-to-text captions and subtitle tracks generated from social media channels dedicated to reading picture books aloud. It consists of approximately 25,585 types (wordforms) and their frequency norms (raw and Zipf-transformed), a lexicon of bigrams, and a document-term matrix.</p>
           </div>
           <div class="abstract-box supplement">
-            <h3>Data-in-Brief CPB-LEX Supplementary Data</h3>
+            <h3>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+              Data-in-Brief CPB-LEX Supplementary Data
+            </h3>
             <p><strong>Expanded Genre & Frequencies Update</strong></p>
-            <p>The Data-in-Brief artcile here (LINK) article shares an extended dataset to explore a large-scale lexical resource derived from children’s picturebook read‑aloud videos publicly available online. It supplements the Children’s Picturebook Lexicon (CPB‑Lex) by substantially increasing corpus size, and providing richer metadata such as genre information.</p>
-            <p>This data has words and their frequencies computed from ~5,874 read‑aloud transcripts from social media, yielding a dataset of approximately 3.49 million word tokens and 44,617 word types. Additional DTMs for narrative and informational subsets defined via genre labels assigned by a large language model are provided in the OSF.</p>
+            <p>This section provides an extended dataset to explore a large-scale lexical resource derived from children’s picturebook read-aloud videos publicly available online. It supplements the foundational database by substantially increasing corpus scale and introducing explicit genre modeling traits.</p>
+            <p>This data segment captures words and structural counts computed across ~5,874 read-aloud transcripts, expanding performance bounds to approximately 3.49 million word tokens and 44,617 word types. Additional structural matrices sorted across narrative and informational tracks are partitioned via Large Language Model classifications.</p>
           </div>
         </div>
       </details>
     </div>
 
-    <!-- Download Links -->
     <div class="download-dashboard">
       <div class="download-card">
         <div>
           <h3>Download the FULL CPB LEX</h3>
           <p>Access the primary experimental data repository containing 25,585 types, Zipf norms, bigram metrics, and foundational document-term arrays.</p>
         </div>
-        <a href="https://osf.io/e493x/overview?view_only=5b9c967584af4dd1b0e63e2463e3c333" target="_blank" rel="noopener noreferrer" class="download-link">Open Core Repository on OSF ↗</a>
+        <a href="https://osf.io/e493x/overview?view_only=5b9c967584af4dd1b0e63e2463e3c333" target="_blank" rel="noopener noreferrer" class="download-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Open Core Repository on OSF ↗
+        </a>
       </div>
       <div class="download-card supplement">
         <div>
           <h3>Download UPDATED SUPPLEMENT (More Data)</h3>
           <p>Access the expanded 3.49 million token matrix, encompassing 5,874 read-aloud transcripts with LLM-generated narrative and informational genre vectors.</p>
         </div>
-        <a href="https://osf.io/53e9y/overview?view_only=c4aff93894c142ecbefe1f225373672c" target="_blank" rel="noopener noreferrer" class="download-link">Open Supplement Repository on OSF ↗</a>
+        <a href="https://osf.io/53e9y/overview?view_only=c4aff93894c142ecbefe1f225373672c" target="_blank" rel="noopener noreferrer" class="download-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Open Supplement Repository on OSF ↗
+        </a>
       </div>
     </div>
 
-    <!-- Data Tabs -->
     <div class="tabs-container">
       <div class="tab-section-header">Core Database Matrices</div>
       <div class="tabs" id="core-tabs">
@@ -247,6 +259,7 @@
         <button class="tab-btn" data-tab="lemmas">Lemmas & POS</button>
         <button class="tab-btn" data-tab="bigrams">Bigrams Lexicon</button>
         <button class="tab-btn" data-tab="pos-bigrams">POS Bigrams</button>
+        <button class="tab-btn" data-tab="matrix">Document Matrix</button>
         <button class="tab-btn" data-tab="key">Codebook (Key to Values)</button>
       </div>
 
@@ -261,7 +274,6 @@
 
     <div id="loading-overlay">Loading data...</div>
 
-    <!-- Main Table Application -->
     <main id="main-content" style="display:none;">
       <div class="controls">
         <div class="search-group">
@@ -299,19 +311,19 @@
   </div>
 
   <footer>
-    <strong>Refercnes:</strong><br/>
-   Green, C., Keogh, K., Sun, H., & O’Brien, B. (2024). The Children’s Picture Books Lexicon (CPB-LEX): A large-scale lexical database from children’s picture books. Behavior Research Methods, 56(5), 4504-4521. <a href="https://doi.org/10.3758/s13428-023-02198-y" target="_blank" rel="noopener noreferrer">https://doi.org/10.3758/s13428-023-02198-y</a>
+    <strong>References:</strong><br/>
+    Green, C., Keogh, K., Sun, H., & O’Brien, B. (2024). The Children’s Picture Books Lexicon (CPB-LEX): A large-scale lexical database from children’s picture books. <i>Behavior Research Methods</i>, 56(5), 4504-4521. <a href="https://doi.org/10.3758/s13428-023-02198-y" target="_blank" rel="noopener noreferrer">https://doi.org/10.3758/s13428-023-02198-y</a>
   </footer>
 
   <script>
-    // File routing setup. 
-    // IMPORTANT: Make sure these files exist in the same folder as this HTML file!
+    // Configured mapping targeting your repository elements explicitly
     const DATASET_FILE_ROUTING = {
       'master': 'CPB(Lexicon)__Master.csv.gz',
       'key': 'CPB(Lexicon)__Key to Values.csv.gz',
       'lemmas': 'CPB(Lexicon)__Lemmas and POS.csv.gz',
       'bigrams': 'CPB(Bigrams)__Bigrams.csv.gz',
       'pos-bigrams': 'CPB(Bigrams)__POS Bigrams.csv.gz',
+      'matrix': 'CPB (Document Matrix).csv.gz',
       
       'supp-core': 'lexicon_frequencies.csv',
       'supp-all': 'freq_all.csv',
@@ -319,7 +331,7 @@
       'supp-informational': 'freq_information.csv'
     };
 
-    let datasetCache = {}; // Stores fully parsed data to prevent re-downloading
+    let datasetCache = {}; 
     let activeTab = 'master';
     
     let runtimeFilteredData = [];
@@ -332,22 +344,19 @@
     let debounceTimer;
 
     document.addEventListener("DOMContentLoaded", () => {
-      // Setup Tab click listeners
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', (e) => switchTab(e.target.getAttribute('data-tab')));
       });
-      // Load initial tab
       switchTab('master');
     });
 
-    // Lazy Loader stream engine
     async function fetchDataset(tabKey) {
-      if (datasetCache[tabKey]) return; // Already loaded
+      if (datasetCache[tabKey]) return;
 
       const filename = DATASET_FILE_ROUTING[tabKey];
       if (!filename) throw new Error("Dataset route not defined.");
 
-      document.getElementById('loading-overlay').innerText = `Loading matrix [${tabKey}]...`;
+      document.getElementById('loading-overlay').innerText = `Loading matrix [${filename}]...`;
       document.getElementById('loading-overlay').style.display = 'block';
       document.getElementById('main-content').style.display = 'none';
 
@@ -370,7 +379,6 @@
           rawText = await response.text();
         }
 
-        // Parse with arrays (header: false) so duplicate column names (like 'Lemma' in the Supplement) don't overwrite each other!
         const parsed = Papa.parse(rawText.trim(), { header: false, skipEmptyLines: true, dynamicTyping: true });
         
         datasetCache[tabKey] = {
@@ -380,7 +388,7 @@
       } catch (err) {
         console.error(err);
         datasetCache[tabKey] = { headers: [`Error loading ${filename}`], rows: [] };
-        alert(`Failed to load ${filename}. Ensure it is placed in the correct directory.`);
+        alert(`Failed to load ${filename}. Verify file presence inside directory container.`);
       }
 
       document.getElementById('loading-overlay').style.display = 'none';
@@ -390,16 +398,13 @@
     async function switchTab(tabKey) {
       activeTab = tabKey;
       
-      // Update UI Tabs
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
         if (btn.getAttribute('data-tab') === tabKey) btn.classList.add('active');
       });
 
-      // Load data (fetches if new, instantly uses cache if already downloaded)
       await fetchDataset(tabKey);
       
-      // Reset view state
       runtimeFilteredData = [...datasetCache[activeTab].rows];
       explicitColumnFilters = [];
       columnDataTypes = [];
@@ -416,7 +421,6 @@
       const data = datasetCache[activeTab];
       data.headers.forEach((h, colIndex) => {
         let isNumeric = false;
-        // Check first 100 rows to ensure we don't misclassify sparse numeric data
         for (let i = 0; i < Math.min(data.rows.length, 100); i++) {
           const val = data.rows[i][colIndex];
           if (val !== null && val !== undefined && typeof val === 'number') {
@@ -436,7 +440,14 @@
       const sortRow = document.createElement('tr');
       headers.forEach((headerName, index) => {
         const th = document.createElement('th');
-        th.innerText = headerName || `Col ${index + 1}`;
+        
+        // Render directional sorting symbols directly alongside text content
+        let sortIndicator = '';
+        if (systematicSortState.index === index) {
+          sortIndicator = systematicSortState.ascending ? ' ▲' : ' ▼';
+        }
+        
+        th.innerHTML = `<span>${headerName || 'Col ' + (index + 1)}</span><span class="sort-indicator">${sortIndicator}</span>`;
         th.onclick = () => triggerColumnSort(index);
         sortRow.appendChild(th);
       });
@@ -550,6 +561,7 @@
         systematicSortState.index = columnIndex;
         systematicSortState.ascending = true;
       }
+      generateDynamicHeaderRow(); // Re-render headers to update visual sort indicators
       applyDataTransformationFilters();
     }
 
@@ -559,6 +571,7 @@
       const filterInputs = document.querySelectorAll('.filter-row input');
       filterInputs.forEach(input => input.value = '');
       systematicSortState = { index: null, ascending: true };
+      generateDynamicHeaderRow();
       applyDataTransformationFilters();
     }
 
