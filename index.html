@@ -1,1 +1,624 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CPB Lexical Database & Psycholinguistic Explorer</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+      color: #0f172a;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container { max-width: 1800px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 25px; }
+    h1 { margin: 0 0 8px 0; font-size: 2.2rem; color: #0f766e; font-weight: 800; }
+    .tagline { font-size: 1.1rem; color: #475569; max-width: 900px; margin: 0 auto; }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #334155;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { background: #f8fafc; }
+    .tab-btn.active {
+      background: #0f766e;
+      color: #fff;
+      border-color: #0f766e;
+      box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+    }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .about-box {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      border-left: 6px solid #0f766e;
+      line-height: 1.6;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      margin: 20px 0;
+      align-items: center;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .search-group { display: flex; gap: 8px; flex-grow: 1; max-width: 700px; }
+
+    #globalSearch {
+      flex-grow: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+    }
+
+    .btn {
+      background: #0f766e;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #115e59; }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #1e293b;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-secondary:hover { background: #cbd5e1; }
+
+    .meta-info {
+      font-size: 0.95rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #e2e8f0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #edf2f7;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #334155;
+      cursor: pointer;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      white-space: nowrap;
+      user-select: none;
+      border-bottom: 2px solid #cbd5e1;
+    }
+    th:hover { background: #f1f5f9; }
+
+    tr:hover td { background: #f0fdfa; }
+
+    .filter-row input {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      font-size: 0.8rem;
+      box-sizing: border-box;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0;
+      align-items: center;
+    }
+
+    .pagination button, .pagination select {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    #loading-overlay {
+      text-align: center;
+      padding: 50px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #0f766e;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+
+    /* AI Prompter layout modifications */
+    .ai-wrap { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
+    .ai-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 20px 0; }
+    .ai-field label { display: block; font-size: 0.9rem; color: #334155; margin-bottom: 6px; font-weight: 600; }
+    .ai-field input, .ai-field select, .ai-field textarea {
+      width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; font-size: 0.95rem; box-sizing: border-box;
+    }
+    .ai-field textarea { min-height: 150px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>CPB Lexical Database</h1>
+      <div class="tagline">Interactive Exploration Portal for Psycholinguistic and Corpus Matrix Revisions</div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('master')">Master Lexicon</button>
+      <button class="tab-btn" onclick="switchTab('lemmas')">Lemmas & POS</button>
+      <button class="tab-btn" onclick="switchTab('bigrams')">Bigrams</button>
+      <button class="tab-btn" onclick="switchTab('pos-bigrams')">POS Bigrams</button>
+      <button class="tab-btn" onclick="switchTab('key')">Key to Values</button>
+      <button class="tab-btn" onclick="switchTab('ai-studio')">AI Research Assistant</button>
+    </div>
+
+    <div id="loading-overlay">Initializing and unpacking Compressed Dataset...</div>
+
+    <main id="main-content" style="display:none;">
+      
+      <div class="controls">
+        <div class="search-group">
+          <input type="text" id="globalSearch" placeholder="Global regex or string filter across text fields..." onkeyup="handleSearchInput(event)"/>
+          <button class="btn" onclick="applyCurrentFilters()">Search 🔍</button>
+        </div>
+        <div>
+          <button class="btn-secondary" onclick="resetAllFilters()">Clear Filters 🧹</button>
+          <button class="btn" style="background:#0284c7;" onclick="exportFilteredDataset()">Export Filtered Data ↓</button>
+        </div>
+        <div class="meta-info">
+          Total Visible Records: <span id="record-count" style="color:#0f766e; font-weight:700;">0</span>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table id="dynamic-datatable">
+          <thead id="table-head"></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <button onclick="changePage(-1)">← Prev</button>
+        <span>Page <strong id="current-page-num">1</strong> of <strong id="total-pages-num">1</strong></span>
+        <button onclick="changePage(1)">Next →</button>
+        <select id="page-size-select" onchange="updatePageSize()">
+          <option value="50">50 items / page</option>
+          <option value="100" selected>100 items / page</option>
+          <option value="250">250 items / page</option>
+        </select>
+      </div>
+    </main>
+
+    <section id="ai-studio-panel" class="tab-pane">
+      <div class="ai-wrap">
+        <h2>AI Psycholinguistic Prompt Studio</h2>
+        <p style="color:#475569;">Convert subsets of filtered lexical structures into structural prompts tailored for experimental item generation or custom educational reading tasks.</p>
+        
+        <div class="ai-grid">
+          <div class="ai-field">
+            <label>Target Grade/Reading Cohort Level</label>
+            <select id="ai-grade-metric">
+              <option>Early Elementary (K-2)</option>
+              <option selected>Upper Elementary (Grades 3-5)</option>
+              <option>Middle School (Grades 6-8)</option>
+              <option>Adult / Advanced</option>
+            </select>
+          </div>
+          <div class="ai-field">
+            <label>Extraction Strategy</label>
+            <select id="ai-sample-strategy">
+              <option value="top">Top rows from filtered list</option>
+              <option value="random" selected>Randomized balanced sample</option>
+            </select>
+          </div>
+          <div class="ai-field">
+            <label>Sample Capacity Size</label>
+            <input type="number" id="ai-sample-size" value="10" min="1" max="50" />
+          </div>
+        </div>
+
+        <div class="ai-field">
+          <label>Contextual Task Guidelines & Constraint Overrides</label>
+          <textarea id="ai-custom-instructions" placeholder="e.g., Construct a 200-word cohesive reading passage incorporating these words. Highlight lexical frequency variants and provide student definitions emphasizing Age of Acquisition attributes."></textarea>
+        </div>
+
+        <button class="btn" onclick="generateLexicalPrompt()">✨ Synthesize Custom AI Prompt</button>
+        
+        <div class="ai-field" style="margin-top:20px;">
+          <label>Generated Ready-to-Copy Prompt Output</label>
+          <textarea id="ai-prompt-output" readonly style="background:#f8fafc; font-family:monospace; font-size:0.9rem; color:#1e293b;"></textarea>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // Configuration Object pointing to the paths relative to your repository layout root folder
+    const REPO_DATA_PATHS = {
+      master: 'CPB(Lexicon)__Master.csv.gz',
+      key: 'CPB(Lexicon)__Key to Values.csv.gz',
+      lemmas: 'CPB(Lexicon)__Lemmas and POS.csv.gz',
+      bigrams: 'CPB(Bigrams)__Bigrams.csv.gz',
+      'pos-bigrams': 'CPB(Bigrams)__POS Bigrams.csv.gz'
+    };
+
+    let datasetRegistry = {}; 
+    let activeTab = 'master';
+    let runtimeFilteredData = [];
+    let currentPage = 1;
+    let pageSize = 100;
+    let explicitColumnFilters = {};
+    let systematicSortState = { column: null, ascending: true };
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        await bootstrapDatabaseLoad();
+      } catch (err) {
+        document.getElementById('loading-overlay').innerHTML = 
+          `<span style="color:#ef4444;">Initialization Failure: ${err.message}. Ensure your local server is running or deployment configurations are correct.</span>`;
+        console.error(err);
+      }
+    });
+
+    // Native Decompression Framework Implementation
+    async function fetchAndUnpackGzipCSV(url) {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP network error reading profile: Status ${response.status}`);
+      
+      // Leverages the native browser stream decompression API
+      const decompressionStream = new DecompressionStream('gzip');
+      const textDecoderStream = new TextDecoderStream();
+      
+      const readableStream = response.body
+        .pipeThrough(decompressionStream)
+        .pipeThrough(textDecoderStream);
+        
+      // Read entire response buffer cleanly
+      let accumulatedOutput = '';
+      const reader = readableStream.getReader();
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        accumulatedOutput += value;
+      }
+      return accumulatedOutput;
+    }
+
+    async function bootstrapDatabaseLoad() {
+      for (const [key, relativePath] of Object.entries(REPO_DATA_PATHS)) {
+        document.getElementById('loading-overlay').innerText = `Decompressing and Indexing Table Data Target: ${key}...`;
+        try {
+          const rawCsvString = await fetchAndUnpackGzipCSV(relativePath);
+          const parsed = Papa.parse(rawCsvString.trim(), {
+            header: true,
+            skipEmptyLines: true,
+            dynamicTyping: true
+          });
+          datasetRegistry[key] = parsed.data;
+        } catch(e) {
+          console.warn(`Could not preload ${key}: ${e.message}. Ensuring fallback placeholder states remain active.`);
+          datasetRegistry[key] = [];
+        }
+      }
+      
+      document.getElementById('loading-overlay').style.display = 'none';
+      document.getElementById('main-content').style.display = 'block';
+      initializeActiveViewEngine();
+    }
+
+    function initializeActiveViewEngine() {
+      document.getElementById('ai-studio-panel').classList.remove('active');
+      document.getElementById('main-content').style.display = activeTab === 'ai-studio' ? 'none' : 'block';
+      
+      if (activeTab === 'ai-studio') {
+        document.getElementById('ai-studio-panel').classList.add('active');
+        return;
+      }
+
+      runtimeFilteredData = [...(datasetRegistry[activeTab] || [])];
+      explicitColumnFilters = {};
+      systematicSortState = { column: null, ascending: true };
+      currentPage = 1;
+      
+      generateDynamicHeaderRow();
+      applyDataTransformationFilters();
+    }
+
+    function generateDynamicHeaderRow() {
+      const headEl = document.getElementById('table-head');
+      headEl.innerHTML = '';
+      
+      const sampleRecord = datasetRegistry[activeTab]?.[0];
+      if (!sampleRecord) {
+        headEl.innerHTML = '<tr><th>No data found or processed for selected registry layout matrix.</th></tr>';
+        return;
+      }
+
+      const keys = Object.keys(sampleRecord);
+      
+      // Row 1: Direct Column Display and Sorting Controls
+      const sortRow = document.createElement('tr');
+      keys.forEach(k => {
+        const th = document.createElement('th');
+        th.innerText = k;
+        th.onclick = () => triggerColumnSort(k);
+        sortRow.appendChild(th);
+      });
+      headEl.appendChild(sortRow);
+
+      // Row 2: Per-column contextual mini-filters
+      const filterRow = document.createElement('tr');
+      filterRow.className = 'filter-row';
+      keys.forEach(k => {
+        const td = document.createElement('td');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = `Filter matching...`;
+        input.value = explicitColumnFilters[k] || '';
+        input.onkeyup = (e) => {
+          explicitColumnFilters[k] = e.target.value;
+          applyDataTransformationFilters();
+        };
+        td.appendChild(input);
+        filterRow.appendChild(td);
+      });
+      headEl.appendChild(filterRow);
+    }
+
+    function applyDataTransformationFilters() {
+      let baselineDataset = datasetRegistry[activeTab] || [];
+      const globalSearchVal = document.getElementById('globalSearch').value.trim().toLowerCase();
+
+      runtimeFilteredData = baselineDataset.filter(row => {
+        // Evaluate column specific targeted parameters
+        for (const [colKey, filterVal] of Object.entries(explicitColumnFilters)) {
+          if (!filterVal) continue;
+          const targetValue = String(row[colKey] ?? '').toLowerCase();
+          if (!targetValue.includes(filterVal.toLowerCase())) return false;
+        }
+
+        // Evaluate global search overlay across entire properties row structure
+        if (globalSearchVal) {
+          const matchedAnywhere = Object.values(row).some(val => 
+            String(val ?? '').toLowerCase().includes(globalSearchVal)
+          );
+          if (!matchedAnywhere) return false;
+        }
+
+        return true;
+      });
+
+      if (systematicSortState.column) {
+        const col = systematicSortState.column;
+        const ascModifier = systematicSortState.ascending ? 1 : -1;
+        runtimeFilteredData.sort((a, b) => {
+          let valA = a[col];
+          let valB = b[col];
+          if (valA === null || valA === undefined) return 1;
+          if (valB === null || valB === undefined) return -1;
+          if (typeof valA === 'string') {
+            return valA.localeCompare(valB) * ascModifier;
+          }
+          return (valA - valB) * ascModifier;
+        });
+      }
+
+      document.getElementById('record-count').innerText = runtimeFilteredData.length.toLocaleString();
+      currentPage = 1;
+      renderPaginatedViewFrame();
+    }
+
+    function renderPaginatedViewFrame() {
+      const bodyEl = document.getElementById('table-body');
+      bodyEl.innerHTML = '';
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = Math.min(startIndex + pageSize, runtimeFilteredData.length);
+      const elementsSlice = runtimeFilteredData.slice(startIndex, endIndex);
+
+      const totalPages = Math.ceil(runtimeFilteredData.length / pageSize) || 1;
+      document.getElementById('current-page-num').innerText = currentPage;
+      document.getElementById('total-pages-num').innerText = totalPages;
+
+      if (elementsSlice.length === 0) {
+        bodyEl.innerHTML = '<tr><td colspan="100" style="text-align:center; padding:30px; color:#64748b;">No items match the chosen query parameters.</td></tr>';
+        return;
+      }
+
+      elementsSlice.forEach(row => {
+        const tr = document.createElement('tr');
+        Object.values(row).forEach(val => {
+          const td = document.createElement('td');
+          // Format numeric distributions beautifully if applicable
+          if (typeof val === 'number' && !Number.isInteger(val)) {
+            td.innerText = val.toFixed(4);
+          } else {
+            td.innerText = val ?? '';
+          }
+          tr.appendChild(td);
+        });
+        bodyEl.appendChild(tr);
+      });
+    }
+
+    function triggerColumnSort(columnName) {
+      if (systematicSortState.column === columnName) {
+        systematicSortState.ascending = !systematicSortState.ascending;
+      } else {
+        systematicSortState.column = columnName;
+        systematicSortState.ascending = true;
+      }
+      applyDataTransformationFilters();
+    }
+
+    function handleSearchInput(e) {
+      if (e.key === 'Enter') applyCurrentFilters();
+    }
+
+    function applyCurrentFilters() {
+      applyDataTransformationFilters();
+    }
+
+    function resetAllFilters() {
+      document.getElementById('globalSearch').value = '';
+      explicitColumnFilters = {};
+      generateDynamicHeaderRow();
+      applyDataTransformationFilters();
+    }
+
+    function changePage(direction) {
+      const totalPages = Math.ceil(runtimeFilteredData.length / pageSize) || 1;
+      const destinationPage = currentPage + direction;
+      if (destinationPage >= 1 && destinationPage <= totalPages) {
+        currentPage = destinationPage;
+        renderPaginatedViewFrame();
+      }
+    }
+
+    function updatePageSize() {
+      pageSize = parseInt(document.getElementById('page-size-select').value, 10);
+      currentPage = 1;
+      renderPaginatedViewFrame();
+    }
+
+    function switchTab(tabKey) {
+      activeTab = tabKey;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.innerText.toLowerCase().includes(tabKey.replace('-',' ').split(' ')[0])) {
+          btn.classList.add('active');
+        }
+      });
+      // Absolute tab string exact matching check override injection
+      if(tabKey === 'pos-bigrams') {
+        document.querySelectorAll('.tab-btn')[3].classList.add('active');
+      }
+      initializeActiveViewEngine();
+    }
+
+    // Dynamic Client-side CSV Exporter System
+    function exportFilteredDataset() {
+      if (!runtimeFilteredData.length) {
+        alert("No target filtered entries exist for processing downline stream execution.");
+        return;
+      }
+      const csvContent = Papa.unparse(runtimeFilteredData);
+      const dataBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const downloadUrl = URL.createObjectURL(dataBlob);
+      const proxyLink = document.createElement('a');
+      proxyLink.href = downloadUrl;
+      proxyLink.setAttribute('download', `cpb_filtered_${activeTab}_export.csv`);
+      document.body.appendChild(proxyLink);
+      proxyLink.click();
+      document.body.removeChild(proxyLink);
+    }
+
+    // AI Studio Lexical Generator System Integration logic
+    function generateLexicalPrompt() {
+      if (!runtimeFilteredData.length) {
+        alert("Please apply filters on the baseline database tabs first to isolate target word structures.");
+        return;
+      }
+      
+      const sampleSize = parseInt(document.getElementById('ai-sample-size').value, 10) || 10;
+      const strategy = document.getElementById('ai-sample-strategy').value;
+      const gradeLevel = document.getElementById('ai-grade-metric').value;
+      const extraInstructions = document.getElementById('ai-custom-instructions').value;
+      
+      let elementsPool = [];
+      if (strategy === 'top') {
+        elementsPool = runtimeFilteredData.slice(0, sampleSize);
+      } else {
+        // Deterministic linear shuffle sampling optimization array
+        const robustCopy = [...runtimeFilteredData];
+        for (let idx = robustCopy.length - 1; idx > 0; idx--) {
+          const randIndex = Math.floor(Math.random() * (idx + 1));
+          [robustCopy[idx], robustCopy[randIndex]] = [robustCopy[randIndex], robustCopy[idx]];
+        }
+        elementsPool = robustCopy.slice(0, sampleSize);
+      }
+
+      // Identify language structures dynamically
+      const cleanTokensSummary = elementsPool.map(item => {
+        const itemIdentifier = item['CPB Word'] || item['Lemmas'] || item['Word_POS'] || Object.values(item)[0];
+        const secondaryMetric = item['Zipf'] ? ` (Zipf: ${Number(item['Zipf']).toFixed(2)})` : '';
+        return `- ${itemIdentifier}${secondaryMetric}`;
+      }).join('\n');
+
+      const builtPrompt = `Context Profile: You are acting as an expert psycholinguist and developer of educational curriculums.
+Target Cohort Audience: ${gradeLevel}
+
+Please use the following parsed lexical elements extracted from our corpus tracking research environment:
+${cleanTokensSummary}
+
+Execution Instructions:
+${extraInstructions || "Construct a balanced instructional passage incorporating the designated tokens. Focus heavily on providing contextual meaning validation to clarify terms with unexpected Zipf indices or late explicit age of acquisition configurations."}
+`;
+
+      document.getElementById('ai-prompt-output').value = builtPrompt;
+    }
+  </script>
+</body>
+</html>
